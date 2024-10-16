@@ -1,0 +1,5 @@
+Inizializzazione nuova API:
+ - installare tutte le dipendenze con `npm install` (deve essere presente il package.json)
+
+Dipendenze utili:
+ - Joi, da usare per la validazione degli input (npm install joi)
