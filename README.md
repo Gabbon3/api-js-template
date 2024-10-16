@@ -1,5 +1,5 @@
 # Template per API Javacript
-Questo repository è pensato come un buon punto di partenza per la creazione di **API** in Javascript tramite l'utilizzo di **NodeJS** insieme ad **Express**.
+Questo repository rappresenta un punto di partenza per la creazione di **API** in Javascript tramite l'utilizzo di **NodeJS** insieme ad **Express**.
 ## Disclaimer sulle chiavi segrete
 Nel file `.env` fornito in questo template sono presenti delle chiavi segrete di esempio, **non sono chiavi reali**.
 ### Gestione delle chiavi
