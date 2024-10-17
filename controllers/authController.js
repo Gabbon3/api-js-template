@@ -45,7 +45,7 @@ export class AuthController {
                     secure: false, // da mettere true in produzione
                     maxAge: TokenUtils.refresh_token_lifetime,
                     sameSite: 'Strict',
-                    path: '/api/auth/refresh', // disponibile solo per la route refresh
+                    path: '/auth/refresh', // disponibile solo per la route refresh
                 });
                 // --
                 res.status(200).json({

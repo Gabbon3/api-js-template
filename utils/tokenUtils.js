@@ -20,7 +20,7 @@ export class TokenUtils {
         // ---
         return jwt.sign(
             {
-                id: uid,
+                sub: uid,
                 iat: now,
                 exp: now + this.access_token_lifetime, // 1h
             },
@@ -38,7 +38,7 @@ export class TokenUtils {
         // ---
         return jwt.sign(
             {
-                id: uid,
+                sub: uid,
                 iat: now,
                 exp: now + this.refresh_token_lifetime, // 1h 
             },
