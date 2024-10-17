@@ -19,7 +19,9 @@ export const verifica_jwt = (req, res, next) => {
     if (!payload) {
         // - provo a rigenerare l'access token
         // - se va a buon fine vuol dire che il token è valido ed è stato rigenerato correttamente
-        return TokenUtils.refresh_token(req, res);
+        // return TokenUtils.refresh_token(req, res);
+        return res.sendStatus(401)
+            .json({ error: "Token di accesso mancante" });
     }
     // -- se è tutto ok aggiungo il payload dell'utente alla request
     req.user = payload;

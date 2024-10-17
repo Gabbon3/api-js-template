@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs/dist/bcrypt.js";
 import { UserModel } from "../models/utenteModel.js";
 import { TokenUtils } from "../utils/tokenUtils.js";
+import { Crypto } from "../utils/cryptoUtils.js";
 
 export class AuthController {
     /**
@@ -18,6 +19,7 @@ export class AuthController {
             res.status(500).json({ error: 'Errore durante la registrazione' });
         }
     }
+
     /**
      * Effettua il login, impostando i jwt in caso di login effettuato con successo
      * @param {Request} req 
@@ -32,6 +34,7 @@ export class AuthController {
             if (utente && password_is_correct) {
                 const access_token = TokenUtils.genera_access_token(utente.id);
                 const refresh_token = TokenUtils.genera_refresh_token(utente.id);
+                const cke = Crypto.random_bytes(32, 'base64');
                 // -- imposto i cookie
                 res.cookie('access_token', access_token, {
                     httpOnly: true,
@@ -47,20 +50,29 @@ export class AuthController {
                     sameSite: 'Strict',
                     path: '/auth/refresh', // disponibile solo per la route refresh
                 });
+                res.cookie('cke', cke, {
+                    httpOnly: true,
+                    secure: false, // da mettere true in produzione
+                    maxAge: TokenUtils.cke_lifetime,
+                    sameSite: 'Strict',
+                    path: '/auth', // disponibile solo per le route auth
+                });
                 // --
                 res.status(200).json({
                     access_token,
                     refresh_token,
+                    cke,
                     uid: utente.id
                 });
             } else {
-                res.status(401).json({ error: 'Username o password errati' });
+                res.status(401).json({ error: `Username o password errati` });
             }
         } catch (error) {
             console.warn(error);
-            res.status(500).json({ error: 'Errore durante l\'accesso' });
+            res.status(500).json({ error: `Errore durante l'accesso` });
         }
     }
+
     /**
      * Rigenera l'access token se il refresh token viene validato
      * @param {Request} req 
@@ -83,5 +95,29 @@ export class AuthController {
         });
         // ---
         return res.status(200).json({ access_token: nuovo_access_token });
+    }
+
+    /**
+     * CKE = Cookie KEy
+     * Rigenera la cke restituendo sia quella nuova che la precedente
+     * @param {Request} req 
+     * @param {Response} res
+     */
+    static cke(req, res) {
+        const cke_precedente = req.cookies.cke ?? null;
+        const cke_nuova = Crypto.random_bytes(32, 'base64');
+        // ---
+        res.cookie('cke', cke_nuova, {
+            httpOnly: true,
+            secure: false, // da mettere true in produzione
+            maxAge: TokenUtils.cke_lifetime,
+            sameSite: 'Strict',
+            path: '/auth', // disponibile solo per le route auth
+        });
+        // ---
+        res.status(200).json({
+            cke_precedente, 
+            cke_nuova
+        });
     }
 }

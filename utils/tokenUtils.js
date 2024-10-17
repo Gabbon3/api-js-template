@@ -6,9 +6,10 @@ dotenv.config();
 export class TokenUtils {
     static ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
     static REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-    // -- tempo di vita dei token in secondi
-    static access_token_lifetime = 60 * 60; // 1h
-    static refresh_token_lifetime = 60 * 60 * 24 * 7; // 7d
+    // -- tempo di vita dei token in millisecondi
+    static access_token_lifetime = 60 * 60 * 1000; // 1h
+    static refresh_token_lifetime = 60 * 60 * 24 * 7 * 1000; // 7d
+    static cke_lifetime = 60 * 60 * 24 * 31 * 1000; // 1M
 
     /**
      * Genera un access token con scadenza di 1 ora
@@ -22,7 +23,7 @@ export class TokenUtils {
             {
                 sub: uid,
                 iat: now,
-                exp: now + this.access_token_lifetime, // 1h
+                exp: now + this.access_token_lifetime / 1000, // 1h
             },
             this.ACCESS_TOKEN_SECRET
         );
@@ -40,7 +41,7 @@ export class TokenUtils {
             {
                 sub: uid,
                 iat: now,
-                exp: now + this.refresh_token_lifetime, // 1h 
+                exp: now + this.refresh_token_lifetime / 1000, // 1h 
             },
             this.REFRESH_TOKEN_SECRET
         );
@@ -101,7 +102,7 @@ export class TokenUtils {
         res.cookie('access_token', nuovo_access_token, {
             httpOnly: true,
             secure: false, // da mettere true in produzione
-            maxAge: TokenUtils.access_token_lifetime
+            maxAge: TokenUtils.access_token_lifetime / 1000
         });
         // ---
         res.user = payload;
