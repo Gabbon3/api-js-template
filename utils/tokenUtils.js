@@ -7,9 +7,9 @@ export class TokenUtils {
     static ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
     static REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
     // -- tempo di vita dei token in millisecondi
-    static access_token_lifetime = 60 * 60 * 1000; // 1h
-    static refresh_token_lifetime = 60 * 60 * 24 * 7 * 1000; // 7d
-    static cke_lifetime = 60 * 60 * 24 * 31 * 1000; // 1M
+    static access_token_lifetime = 60 * 60 * 1000; // 1 ora
+    static refresh_token_lifetime = 60 * 60 * 24 * 14 * 1000; // 14 giorni
+    static cke_lifetime = 60 * 60 * 24 * 31 * 1000; // 1 mese
 
     /**
      * Genera un access token con scadenza di 1 ora
