@@ -52,8 +52,8 @@ export class TokenUtils {
      * @param {string} access_token - Il token da verificare
      * @returns {Promise<Object>} - L'oggetto utente decodificato se valido
      */
-    static async verifica_access_token(access_token) {
-        return await this.verifica_token(access_token, this.ACCESS_TOKEN_SECRET);
+    static verifica_access_token(access_token) {
+        return this.verifica_token(access_token, this.ACCESS_TOKEN_SECRET);
     }
 
     /**
@@ -61,8 +61,8 @@ export class TokenUtils {
      * @param {string} refresh_token - Il token da verificare
      * @returns {Promise<Object>} - L'oggetto utente decodificato se valido
      */
-    static async verifica_refresh_token(refresh_token) {
-        return await this.verifica_token(refresh_token, this.REFRESH_TOKEN_SECRET);
+    static verifica_refresh_token(refresh_token) {
+        return this.verifica_token(refresh_token, this.REFRESH_TOKEN_SECRET);
     }
 
     /**
@@ -71,7 +71,7 @@ export class TokenUtils {
      * @param {string} secret - Segreto dell'access o del refresh token
      * @returns {Promise<Object>} - L'oggetto utente decodificato se valido
      */
-    static async verifica_token(token, secret) {
+    static verifica_token(token, secret) {
         try {
             // -- provo a verificare il jwt
             // -- se invalido lancerà un errore quindi lo catturo
