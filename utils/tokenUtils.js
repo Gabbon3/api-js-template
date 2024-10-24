@@ -1,11 +1,14 @@
 import jwt from 'jsonwebtoken';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import { UID } from './uid.js';
 
 dotenv.config();
 
 export class TokenUtils {
     static ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
     static REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+    // -- proprietà dei jwt o cookie
+    static secure_option = false;
     // -- tempo di vita dei token in millisecondi
     static access_token_lifetime = 60 * 60 * 1000; // 1 ora
     static refresh_token_lifetime = 60 * 60 * 24 * 14 * 1000; // 14 giorni
@@ -36,12 +39,14 @@ export class TokenUtils {
      */
     static genera_refresh_token(uid) {
         const now = Math.floor(Date.now() / 1000);
+        const tid = UID.genera(3);
         // ---
         return jwt.sign(
             {
-                sub: uid,
+                tid: tid,
+                uid: uid,
                 iat: now,
-                exp: now + this.refresh_token_lifetime / 1000, // 1h 
+                exp: now + this.refresh_token_lifetime / 1000, // 7 giorni
             },
             this.REFRESH_TOKEN_SECRET
         );
@@ -101,7 +106,7 @@ export class TokenUtils {
         const nuovo_access_token = TokenUtils.genera_access_token(payload);
         res.cookie('access_token', nuovo_access_token, {
             httpOnly: true,
-            secure: false, // da mettere true in produzione
+            secure: this.secure_option, // da mettere true in produzione
             maxAge: TokenUtils.access_token_lifetime / 1000
         });
         // ---

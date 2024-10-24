@@ -1,5 +1,5 @@
-import express from "express";
-import cookieParser from "cookie-parser";
+import express from 'express';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import auth_routes from './routes/authRoutes.js';
 

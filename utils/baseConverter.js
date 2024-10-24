@@ -12,13 +12,14 @@ export class BaseConverter {
         if (b < 2 || b > 62) throw new Error("2 < b < 62!");
         if (n === 0n) return '0';
         // ---
+        b = BigInt(b);
         let result = '';
         let negativo = n < 0n;
         n = negativo ? -n : n;
         // ---
         while (n > 0n) {
-            result = BaseConverter.chars[n % BigInt(b)] + result;
-            n = n / BigInt(b);
+            result = BaseConverter.chars[n % b] + result;
+            n = n / b;
         }
         // ---
         return (negativo ? '-' : '') + result;

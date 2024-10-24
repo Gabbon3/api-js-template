@@ -38,21 +38,21 @@ export class AuthController {
                 // -- imposto i cookie
                 res.cookie('access_token', access_token, {
                     httpOnly: true,
-                    secure: false, // da mettere true in produzione
+                    secure: TokenUtils.secure_option, // da mettere true in produzione
                     maxAge: TokenUtils.access_token_lifetime,
                     sameSite: 'Strict',
                     path: '/', // disponibile per tutte le route
                 });
                 res.cookie('refresh_token', refresh_token, {
                     httpOnly: true,
-                    secure: false, // da mettere true in produzione
+                    secure: TokenUtils.secure_option, // da mettere true in produzione
                     maxAge: TokenUtils.refresh_token_lifetime,
                     sameSite: 'Strict',
                     path: '/auth/refresh', // disponibile solo per la route refresh
                 });
                 res.cookie('cke', cke, {
                     httpOnly: true,
-                    secure: false, // da mettere true in produzione
+                    secure: TokenUtils.secure_option, // da mettere true in produzione
                     maxAge: TokenUtils.cke_lifetime,
                     sameSite: 'Strict',
                     path: '/auth', // disponibile solo per le route auth
