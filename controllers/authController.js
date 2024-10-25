@@ -39,21 +39,21 @@ export class AuthController {
                 res.cookie('access_token', access_token, {
                     httpOnly: true,
                     secure: TokenUtils.secure_option, // da mettere true in produzione
-                    maxAge: TokenUtils.access_token_lifetime,
+                    maxAge: TokenUtils.access_token_cookie_lifetime,
                     sameSite: 'Strict',
                     path: '/', // disponibile per tutte le route
                 });
                 res.cookie('refresh_token', refresh_token, {
                     httpOnly: true,
                     secure: TokenUtils.secure_option, // da mettere true in produzione
-                    maxAge: TokenUtils.refresh_token_lifetime,
+                    maxAge: TokenUtils.refresh_token_cookie_lifetime, // 14 giorni
                     sameSite: 'Strict',
                     path: '/auth/refresh', // disponibile solo per la route refresh
                 });
                 res.cookie('cke', cke, {
                     httpOnly: true,
                     secure: TokenUtils.secure_option, // da mettere true in produzione
-                    maxAge: TokenUtils.cke_lifetime,
+                    maxAge: TokenUtils.cke_cookie_lifetime,
                     sameSite: 'Strict',
                     path: '/auth', // disponibile solo per le route auth
                 });

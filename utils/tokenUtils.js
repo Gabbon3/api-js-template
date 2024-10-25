@@ -10,9 +10,13 @@ export class TokenUtils {
     // -- proprietà dei jwt o cookie
     static secure_option = false;
     // -- tempo di vita dei token in millisecondi
-    static access_token_lifetime = 60 * 60 * 1000; // 1 ora
-    static refresh_token_lifetime = 60 * 60 * 24 * 14 * 1000; // 14 giorni
-    static cke_lifetime = 60 * 60 * 24 * 31 * 1000; // 1 mese
+    static access_token_lifetime = 60 * 60; // 1 ora
+    static refresh_token_lifetime = 60 * 60 * 24 * 14; // 14 giorni
+    static cke_lifetime = 60 * 60 * 24 * 31; // 31 giorni
+    // -- tempo di vita dei cookie
+    static access_token_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
+    static refresh_token_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
+    static cke_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
 
     /**
      * Genera un access token con scadenza di 1 ora
@@ -26,7 +30,7 @@ export class TokenUtils {
             {
                 sub: uid,
                 iat: now,
-                exp: now + this.access_token_lifetime / 1000, // 1h
+                exp: now + this.access_token_lifetime,
             },
             this.ACCESS_TOKEN_SECRET
         );
@@ -46,7 +50,7 @@ export class TokenUtils {
                 tid: tid,
                 uid: uid,
                 iat: now,
-                exp: now + this.refresh_token_lifetime / 1000, // 7 giorni
+                exp: now + this.refresh_token_lifetime,
             },
             this.REFRESH_TOKEN_SECRET
         );
