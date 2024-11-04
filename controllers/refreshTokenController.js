@@ -25,7 +25,7 @@ export class RefreshTokenController {
             maxAge: AccessToken.access_token_cookie_lifetime
         });
         // -- aggiorno l'ultimo utilizzo del refresh token
-        RefreshTokenModel.aggiorna(refresh_token);
+        RefreshTokenModel.aggiorna_ultimo_utilizzo(refresh_token);
         // --
         return res.status(201).json({ 'access_token': nuovo_access_token });
     }

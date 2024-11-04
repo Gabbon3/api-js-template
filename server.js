@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import auth_routes from './routes/authRoutes.js';
 import token_routes from './routes/tokenRoutes.js';
+import { date } from './utils/dateUtils.js';
 
 dotenv.config();
 
@@ -25,3 +26,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
+
+console.log(date.format("%H:%i:%s"));

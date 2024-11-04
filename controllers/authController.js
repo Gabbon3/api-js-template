@@ -38,7 +38,7 @@ export class AuthController {
                 const user_agent_hash = Cripto.hash(req.get('user-agent'), { algorithm: 'md5', encoding: 'hex' });
                 RefreshTokenModel.rimuovi_precedenti(utente.id, user_agent_hash);
                 // -- genero il nuovo refresh token
-                const refresh_token = await RefreshTokenModel.nuovo(utente.id, req.get('user-agent'), '');
+                const refresh_token = await RefreshTokenModel.genera(utente.id, req.get('user-agent'), '');
                 if (!refresh_token) throw new Error("Refresh token non valido");
                 // ---
                 const cke = Cripto.random_bytes(32, 'base64');
@@ -65,7 +65,7 @@ export class AuthController {
                     path: '/auth', // disponibile solo per le route auth
                 });
                 // --
-                res.status(200).json({
+                res.status(201).json({
                     access_token,
                     refresh_token,
                     cke,

@@ -25,7 +25,7 @@ export class RefreshTokenModel {
      * @param {string} user_agent 
      * @param {string} ip_address 
      */
-    static async nuovo(user_id, user_agent = '', ip_address = '') {
+    static async genera(user_id, user_agent = '', ip_address = '') {
         const token = UID.genera(12);
         // ---
         const ua = UAParser(user_agent);
@@ -67,16 +67,14 @@ export class RefreshTokenModel {
      * Aggiorna la data di ultimo utilizzo
      * @param {string} token_id 
      */
-    static async aggiorna(token_id) {
-        const last_used_at = date.format('%Y-%m-%d %H:%i:%s');
-        // ---
+    static async aggiorna_ultimo_utilizzo(token_id) {
         const sql = `
             UPDATE refresh_token
             SET last_used_at = ?
             WHERE id = ?
         `;
         // ---
-        const [result] = await pool.execute(sql, [last_used_at, token_id]);
+        const [result] = await pool.execute(sql, [new Date(), token_id]);
         // ---
         return result.affectedRows === 1;
     }
@@ -111,5 +109,8 @@ export class RefreshTokenModel {
         const [result] = await pool.execute(`DELETE FROM refresh_token WHERE user_id = ? AND user_agent_hash = ? AND iat < ?`, [user_id, user_agent_hash, cutoff]);
         // ---
         return result.affectedRows >= 1;
+    }
+    static async revoca(token_id, flag) {
+
     }
 }
