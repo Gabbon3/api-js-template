@@ -100,7 +100,9 @@ export class date {
             s: String(date.getSeconds()).padStart(2, "0"),
         };
         // ---
-        return format.replace(
+        return format.replace(/%(\w)/g, (match, p1) => {
+            return map[p1] !== undefined ? map[p1] : match;
+        }).replace(
             /Y|y|m|n|M|F|t|d|j|D|l|w|N|S|z|W|H|G|h|g|A|a|i|s/g,
             (match) => map[match]
         );

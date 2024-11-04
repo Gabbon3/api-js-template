@@ -1,4 +1,4 @@
-import { TokenUtils } from "../utils/tokenUtils.js";
+import { AccessToken } from "../utils/tokenUtils.js";
 
 /**
  * Middleware per la verifica del jwt e refresh 
@@ -15,7 +15,7 @@ export const verifica_jwt = (req, res, next) => {
             .json({ error: "Token di accesso mancante" });
     }
     // -- verifico che l'access token sia valido
-    const payload = TokenUtils.verifica_access_token(access_token);
+    const payload = AccessToken.verifica_access_token(access_token);
     if (!payload) {
         // - provo a rigenerare l'access token
         // - se va a buon fine vuol dire che il token è valido ed è stato rigenerato correttamente

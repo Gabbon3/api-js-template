@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export class Crypto {
+export class Cripto {
     /**
      * Genera una serie di byte casuali crittograficamente sicuri
      * @param {number} size numero di byte da generare casualmente del

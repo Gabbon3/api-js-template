@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import auth_routes from './routes/authRoutes.js';
+import token_routes from './routes/tokenRoutes.js';
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ app.use(cookieParser());
  * ROUTES
  */
 app.use('/auth', auth_routes);
-
+app.use('/auth/token', token_routes);
 
 const PORT = process.env.PORT || 3000;
 
