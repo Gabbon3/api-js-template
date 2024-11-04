@@ -34,8 +34,12 @@ export class AuthController {
             // ---
             if (utente && password_is_correct) {
                 const access_token = AccessToken.genera_access_token(utente.id);
-                // ---
+                // -- elimino quello vecchio se esiste
+                const user_agent_hash = Cripto.hash(req.get('user-agent'), { algorithm: 'md5', encoding: 'hex' });
+                RefreshTokenModel.rimuovi_precedenti(utente.id, user_agent_hash);
+                // -- genero il nuovo refresh token
                 const refresh_token = await RefreshTokenModel.nuovo(utente.id, req.get('user-agent'), '');
+                if (!refresh_token) throw new Error("Refresh token non valido");
                 // ---
                 const cke = Cripto.random_bytes(32, 'base64');
                 // -- imposto i cookie

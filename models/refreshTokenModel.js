@@ -8,7 +8,7 @@ import { date } from '../utils/dateUtils.js';
 CREATE TABLE `refresh_token` (
   `id` varchar(50) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `device_name` varchar(25) NOT NULL DEFAULT 'Nuovo dispositivo *',
+  `device_name` varchar(25) NOT NULL DEFAULT '*',
   `user_agent_hash` varchar(32) NOT NULL COMMENT 'MD5',
   `user_agent_summary` varchar(100) DEFAULT NULL,
   `ip_address` varchar(45) DEFAULT NULL,
@@ -29,7 +29,7 @@ export class RefreshTokenModel {
         const token = UID.genera(12);
         // ---
         const ua = UAParser(user_agent);
-        const user_agent_summary = `${ua.browser.name ?? ''}-${ua.browser.major ?? ''}-${ua.os.name ?? ''}${ua.os.version ?? ''}`;
+        const user_agent_summary = `${ua.browser.name ?? ''}-${ua.browser.major ?? ''}-${ua.os.name ?? ''}-${ua.os.version ?? ''}`;
         const user_agent_hash = Cripto.hash(user_agent, { algorithm: 'md5', encoding: 'hex' });
         // ---
         const sql = `
@@ -99,5 +99,17 @@ export class RefreshTokenModel {
         const [result] = await pool.execute(`SELECT * FROM refresh_token WHERE user_id = ?`, [user_id]);
         // ---
         return result ?? null;
+    }
+    /**
+     * Rimuove dal db tutti i refresh token associato ad un dispositivo
+     * @param {string} user_id 
+     * @param {string} user_agent_hash - hash dell'user agent per identificare velocemente il dispositivo
+     * @param {Date} cutoff - data di riferimento da usare per eliminare i token antecedenti ad essa
+     * @returns {boolean}
+     */
+    static async rimuovi_precedenti(user_id, user_agent_hash, cutoff = new Date()) {
+        const [result] = await pool.execute(`DELETE FROM refresh_token WHERE user_id = ? AND user_agent_hash = ? AND iat < ?`, [user_id, user_agent_hash, cutoff]);
+        // ---
+        return result.affectedRows >= 1;
     }
 }
