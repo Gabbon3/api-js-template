@@ -60,7 +60,7 @@ export class UserController {
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
             secure: TokenUtils.secure_option, // da mettere true in produzione
-            maxAge: TokenUtils.refresh_token_cookie_lifetime, // 14 giorni
+            maxAge: TokenUtils.refresh_token_cookie_lifetime,
             sameSite: 'Strict',
             path: '/auth/token/refresh',
         });

@@ -35,7 +35,7 @@ export class RefreshTokenController {
     get_all = async (req, res) => {
         try {
             const tokens = await this.service.get_all(req.user.sub);
-            res.status(200).json({ tokens });
+            res.status(200).json( tokens );
         } catch (error) {
             console.warn(error);
             res.sendStatus(500)

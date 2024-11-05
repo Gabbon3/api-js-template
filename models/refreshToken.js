@@ -43,5 +43,6 @@ export const RefreshToken = sequelize.define(
     {
         tableName: "refresh_token",
         timestamps: false,
+        underscored: true
     }
 );

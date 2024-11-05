@@ -4,6 +4,7 @@ import { UID } from "../utils/uid.js";
 import { Cripto } from "../utils/cryptoUtils.js";
 
 export class RefreshTokenService {
+    static random_c_length = 10;
     /**
      * Crea un nuovo refresh token salvandolo sul db e restituendolo
      * @param {string} user_id
@@ -11,7 +12,7 @@ export class RefreshTokenService {
      * @returns {string}
      */
     async create(user_id, user_agent) {
-        const token_id = UID.genera(6, true);
+        const token_id = UID.genera(RefreshTokenService.random_c_length, true);
         // -- User Agent
         const ua = UAParser(user_agent);
         const user_agent_summary = `${ua.browser.name ?? ""}-${

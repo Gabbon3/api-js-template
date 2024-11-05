@@ -11,8 +11,8 @@ export class TokenUtils {
     static access_token_lifetime = 60 * 60; // 1 ora
     static cke_lifetime = 60 * 60 * 24 * 31; // 31 giorni
     // -- tempo di vita dei cookie
-    static access_token_cookie_lifetime = 60 * 60 * 1000; // 31 giorni
-    static refresh_token_cookie_lifetime = 60 * 60 * 1000; // 31 giorni
+    static access_token_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
+    static refresh_token_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
     static cke_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
 
     /**
