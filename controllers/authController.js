@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs/dist/bcrypt.js";
 import { UserModel } from "../models/utenteModel.js";
-import { AccessToken } from "../utils/tokenUtils.js";
+import { TokenUtils } from "../utils/tokenUtils.js";
 import { Cripto } from "../utils/cryptoUtils.js";
 import { RefreshTokenModel } from "../models/refreshTokenModel.js";
 
@@ -33,7 +33,7 @@ export class AuthController {
             const password_is_correct = await bcrypt.compare(password, utente.password);
             // ---
             if (utente && password_is_correct) {
-                const access_token = AccessToken.genera_access_token(utente.id);
+                const access_token = TokenUtils.genera_access_token(utente.id);
                 // -- elimino quello vecchio se esiste
                 const user_agent_hash = Cripto.hash(req.get('user-agent'), { algorithm: 'md5', encoding: 'hex' });
                 RefreshTokenModel.rimuovi_precedenti(utente.id, user_agent_hash);
@@ -45,22 +45,22 @@ export class AuthController {
                 // -- imposto i cookie
                 res.cookie('access_token', access_token, {
                     httpOnly: true,
-                    secure: AccessToken.secure_option, // da mettere true in produzione
-                    maxAge: AccessToken.access_token_cookie_lifetime,
+                    secure: TokenUtils.secure_option, // da mettere true in produzione
+                    maxAge: TokenUtils.access_token_cookie_lifetime,
                     sameSite: 'Strict',
                     path: '/', // disponibile per tutte le route
                 });
                 res.cookie('refresh_token', refresh_token, {
                     httpOnly: true,
-                    secure: AccessToken.secure_option, // da mettere true in produzione
-                    maxAge: AccessToken.refresh_token_cookie_lifetime, // 14 giorni
+                    secure: TokenUtils.secure_option, // da mettere true in produzione
+                    maxAge: TokenUtils.refresh_token_cookie_lifetime, // 14 giorni
                     sameSite: 'Strict',
                     path: '/auth/token/refresh',
                 });
                 res.cookie('cke', cke, {
                     httpOnly: true,
-                    secure: AccessToken.secure_option, // da mettere true in produzione
-                    maxAge: AccessToken.cke_cookie_lifetime,
+                    secure: TokenUtils.secure_option, // da mettere true in produzione
+                    maxAge: TokenUtils.cke_cookie_lifetime,
                     sameSite: 'Strict',
                     path: '/auth', // disponibile solo per le route auth
                 });
@@ -93,7 +93,7 @@ export class AuthController {
         res.cookie('cke', cke_nuova, {
             httpOnly: true,
             secure: false, // da mettere true in produzione
-            maxAge: AccessToken.cke_lifetime,
+            maxAge: TokenUtils.cke_lifetime,
             sameSite: 'Strict',
             path: '/auth', // disponibile solo per le route auth
         });

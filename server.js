@@ -1,9 +1,13 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-import auth_routes from './routes/authRoutes.js';
+import { sequelize } from './config/db.js';
+// ---
+
+// ---
+import user_routes from './routes/userRoutes.js';
 import token_routes from './routes/tokenRoutes.js';
-import { date } from './utils/dateUtils.js';
+import './models/associations.js';
 
 dotenv.config();
 
@@ -18,13 +22,21 @@ app.use(cookieParser());
 /**
  * ROUTES
  */
-app.use('/auth', auth_routes);
+app.use('/auth', user_routes);
 app.use('/auth/token', token_routes);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
-});
-
-console.log(date.format("%H:%i:%s"));
+try {
+    await sequelize.authenticate();
+    console.log('Connessione al database stabilita con successo.');
+    // ---
+    await sequelize.sync({ alter: true });
+    console.log('Modelli sincronizzati con il database.');
+    // ---
+    app.listen(PORT, () => {
+        console.log(`Server in ascolto su http://localhost:${PORT}`);
+    });
+} catch (error) {
+    console.error('Errore nella connessione al database:', error);
+}

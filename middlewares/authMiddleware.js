@@ -1,4 +1,4 @@
-import { AccessToken } from "../utils/tokenUtils.js";
+import { TokenUtils } from "../utils/tokenUtils.js";
 
 /**
  * Middleware per la verifica del jwt e refresh 
@@ -7,15 +7,14 @@ import { AccessToken } from "../utils/tokenUtils.js";
  * @param {Response} res 
  * @param {Function} next 
  */
-export const verifica_jwt = (req, res, next) => {
+export const verify_access_token = (req, res, next) => {
     const access_token = req.cookies.access_token;
     // -- verifico che esista
     if (!access_token) {
-        return res.sendStatus(401)
-            .json({ error: "Token di accesso mancante" });
+        return res.status(401).json({ error: "Token di accesso mancante" });
     }
     // -- verifico che l'access token sia valido
-    const payload = AccessToken.verifica_access_token(access_token);
+    const payload = TokenUtils.verifica_access_token(access_token);
     if (!payload) {
         // - provo a rigenerare l'access token
         // - se va a buon fine vuol dire che il token è valido ed è stato rigenerato correttamente

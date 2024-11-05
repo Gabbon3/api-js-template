@@ -1,11 +1,10 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { UID } from './uid.js';
 
 dotenv.config();
 
-export class AccessToken {
-    static TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+export class TokenUtils {
+    static ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
     // -- proprietà dei jwt o cookie
     static secure_option = false;
     // -- tempo di vita dei token in millisecondi
@@ -30,7 +29,7 @@ export class AccessToken {
                 iat: now,
                 exp: now + this.access_token_lifetime,
             },
-            this.TOKEN_SECRET
+            this.ACCESS_TOKEN_SECRET
         );
     }
 
@@ -40,7 +39,7 @@ export class AccessToken {
      * @returns {Promise<Object>} - L'oggetto utente decodificato se valido
      */
     static verifica_access_token(access_token) {
-        return this.verifica_token(access_token, this.TOKEN_SECRET);
+        return this.verifica_token(access_token, this.ACCESS_TOKEN_SECRET);
     }
 
     /**

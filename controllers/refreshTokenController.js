@@ -1,44 +1,73 @@
-import { RefreshTokenModel } from "../models/refreshTokenModel.js";
-import { AccessToken } from "../utils/tokenUtils.js";
+import { RefreshTokenService } from "../services/refreshTokenService.js";
+import { TokenUtils } from "../utils/tokenUtils.js";
 
 export class RefreshTokenController {
+    constructor() {
+        this.service = new RefreshTokenService();
+    }
     /**
-     * Genera un nuovo access token
-     * @param {Request} req 
-     * @param {Response} res 
-     * @returns 
+     * Genera un nuovo access token se il refresh token è valido
+     * @param {*} req 
+     * @param {*} res 
      */
-    static async nuovo_access_token(req, res) {
-        const refresh_token = req.cookies.refresh_token;
-        if (!refresh_token) return res.sendStatus(403);
-        // ---
-        const user_agent = req.get('user-agent');
-        const ip_address = '';
-        // -- verifico il refresh token
-        const payload = await RefreshTokenModel.verifica(refresh_token, user_agent, ip_address);
-        if (!payload) return res.sendStatus(403);
-        // -- genero il nuovo access token e lo salvo come cookie
-        const nuovo_access_token = AccessToken.genera_access_token(payload.user_id);
-        res.cookie('access_token', nuovo_access_token, {
-            httpOnly: true,
-            secure: AccessToken.secure_option,
-            maxAge: AccessToken.access_token_cookie_lifetime
-        });
-        // -- aggiorno l'ultimo utilizzo del refresh token
-        RefreshTokenModel.aggiorna_ultimo_utilizzo(refresh_token);
-        // --
-        return res.status(201).json({ 'access_token': nuovo_access_token });
+    generate_access_token = async (req, res) => {
+        try {
+            const token_id = req.cookies.refresh_token;
+            const user_agent = req.get('user-agent');
+            // ---
+            const refresh_token = await this.service.verify(token_id, user_agent);
+            if (!refresh_token) return res.sendStatus(403);
+            // ---
+            const access_token = await TokenUtils.genera_access_token(refresh_token.user_id);
+            // -- aggiorno l'ultimo utilizzo del refresh token
+            await this.service.update_last_used(token_id);
+            res.status(201).json({ access_token });
+        } catch (error) {
+            console.warn(error);
+            res.sendStatus(500)
+        }
     }
     /**
      * Restituisce tutti i token associati ad un utente
-     * @param {Request} req 
-     * @param {Response} res 
+     * @param {*} req 
+     * @param {*} res 
      */
-    static async ottieni_tutti(req, res) {
-        const user_id = req.user.sub;
-        // ---
-        const tokens = await RefreshTokenModel.ottieni_tutti(user_id);
-        // ---
-        res.status(200).json(tokens);
+    get_all = async (req, res) => {
+        try {
+            const tokens = await this.service.get_all(req.user.sub);
+            res.status(200).json({ tokens });
+        } catch (error) {
+            console.warn(error);
+            res.sendStatus(500)
+        }
+    }
+    /**
+     * Revoca o riattiva un refresh token
+     * @param {*} req body { token_id, revoke }
+     * @param {*} res 
+     */
+    revoke = async (req, res) => {
+        try {
+            const { token_id, revoke } = req.body;
+            await this.service.revoke(token_id, revoke);
+            res.status(200).json({ "revoked": revoke });
+        } catch (error) {
+            console.warn(error);
+            res.sendStatus(500)
+        }
+    }
+    /**
+     * Revoca tutti i refresh token associati ad un utente
+     * @param {*} req 
+     * @param {*} res 
+     */
+    revoke_all = async (req, res) => {
+        try {
+            await this.service.revoke_all(req.user.sub);
+            res.sendStatus(200);
+        } catch (error) {
+            console.warn(error);
+            res.sendStatus(500)
+        }
     }
 }

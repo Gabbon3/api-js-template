@@ -1,9 +1,11 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import { RefreshTokenController } from "../controllers/refreshTokenController.js";
-import { verifica_jwt } from "../middlewares/authMiddleware.js";
+import { verify_access_token } from "../middlewares/authMiddleware.js";
 // -- router
 const router = express.Router();
+// -- controller
+const controller = new RefreshTokenController();
 // -- rate Limiter per le auth routes
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
@@ -11,9 +13,12 @@ const limiter = rateLimit({
     message: "Troppe richieste, riprova più tardi",
 });
 router.use(limiter);
+router.use(verify_access_token);
 // -- le routes con i controller associati
 // /auth/token
-router.post('/refresh', verifica_jwt, RefreshTokenController.nuovo_access_token);
-router.get('/', verifica_jwt, RefreshTokenController.ottieni_tutti);
+router.post('/refresh', controller.generate_access_token);
+router.post('/revoke', controller.revoke);
+router.post('/revoke-all', controller.revoke_all);
+router.get('/', controller.get_all);
 
 export default router;

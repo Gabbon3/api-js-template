@@ -1,9 +1,11 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { AuthController } from "../controllers/authController.js";
-import { verifica_jwt } from "../middlewares/authMiddleware.js";
+// import { verifica_jwt } from "../middlewares/authMiddleware.js";
+import { UserController } from "../controllers/userController.js";
 // -- router
 const router = express.Router();
+// -- controller
+const controller = new UserController();
 // -- rate Limiter per le auth routes
 const limiter = rateLimit({
     windowMs: 2 * 60 * 1000, // 2 minuti
@@ -12,8 +14,7 @@ const limiter = rateLimit({
 });
 router.use(limiter);
 // -- le routes con i controller associati
-router.post('/registrati', AuthController.registra);
-router.post('/accedi', AuthController.accedi);
-router.post('/cke', verifica_jwt, AuthController.cke);
+router.post('/registrati', controller.registra);
+router.post('/accedi', controller.accedi);
 
 export default router;
