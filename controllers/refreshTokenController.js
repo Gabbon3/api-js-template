@@ -34,7 +34,7 @@ export class RefreshTokenController {
      */
     get_all = async (req, res) => {
         try {
-            const tokens = await this.service.get_all(req.user.sub);
+            const tokens = await this.service.get_all(req.user.uid);
             res.status(200).json( tokens );
         } catch (error) {
             console.warn(error);
@@ -63,7 +63,7 @@ export class RefreshTokenController {
      */
     revoke_all = async (req, res) => {
         try {
-            await this.service.revoke_all(req.user.sub);
+            await this.service.revoke_all(req.user.uid);
             res.sendStatus(200);
         } catch (error) {
             console.warn(error);

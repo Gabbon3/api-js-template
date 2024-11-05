@@ -18,7 +18,7 @@ export class UserController {
             res.status(201).json({ message: 'Utente registrato con successo', user });
         } catch (error) {
             console.warn(error);
-            res.status(400).json({ error: 'Errore durante la registrazione' });   
+            res.status(400).json({ error: error.message });
         }
     }
     /**

@@ -17,7 +17,7 @@ export class TokenUtils {
     static refresh_token_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
     static cke_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
     // -- cifra il contenuto del token
-    static encrypt = true;
+    static encrypt = false;
 
     /**
      * Genera un access token con scadenza di 1 ora
@@ -29,7 +29,7 @@ export class TokenUtils {
         // ---
         const token = jwt.sign(
             {
-                sub: uid,
+                uid: uid,
                 iat: now,
                 exp: now + this.access_token_lifetime,
             },
