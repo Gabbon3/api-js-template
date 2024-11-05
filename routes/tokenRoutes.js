@@ -13,12 +13,11 @@ const limiter = rateLimit({
     message: "Troppe richieste, riprova più tardi",
 });
 router.use(limiter);
-router.use(verify_access_token);
 // -- le routes con i controller associati
 // /auth/token
 router.post('/refresh', controller.generate_access_token);
-router.post('/revoke', controller.revoke);
-router.post('/revoke-all', controller.revoke_all);
-router.get('/', controller.get_all);
+router.post('/revoke', verify_access_token, controller.revoke);
+router.post('/revoke-all', verify_access_token, controller.revoke_all);
+router.get('/', verify_access_token, controller.get_all);
 
 export default router;

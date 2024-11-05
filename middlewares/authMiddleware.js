@@ -19,7 +19,7 @@ export const verify_access_token = (req, res, next) => {
         // - provo a rigenerare l'access token
         // - se va a buon fine vuol dire che il token è valido ed è stato rigenerato correttamente
         // return TokenUtils.refresh_token(req, res);
-        return res.sendStatus(401)
+        return res.status(401)
             .json({ error: "Token di accesso mancante" });
     }
     // -- se è tutto ok aggiungo il payload dell'utente alla request
