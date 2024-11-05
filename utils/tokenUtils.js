@@ -1,10 +1,12 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { AES256GCM } from "./aesgcm.js";
 
 dotenv.config();
 
 export class TokenUtils {
     static ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+    static TOKEN_KEY = Buffer.from(process.env.TOKEN_KEY, "hex");
     // -- proprietà dei jwt o cookie
     static secure_option = false;
     // -- tempo di vita dei token in millisecondi
@@ -14,6 +16,8 @@ export class TokenUtils {
     static access_token_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
     static refresh_token_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
     static cke_cookie_lifetime = 60 * 60 * 24 * 31 * 1000; // 31 giorni
+    // -- cifra il contenuto del token
+    static encrypt = true;
 
     /**
      * Genera un access token con scadenza di 1 ora
@@ -23,7 +27,7 @@ export class TokenUtils {
     static genera_access_token(uid) {
         const now = Math.floor(Date.now() / 1000);
         // ---
-        return jwt.sign(
+        const token = jwt.sign(
             {
                 sub: uid,
                 iat: now,
@@ -31,6 +35,16 @@ export class TokenUtils {
             },
             this.ACCESS_TOKEN_SECRET
         );
+        // -- cifro il token se richiesto
+        if (this.encrypt) {
+            const encrypted_token = AES256GCM.encrypt(
+                Buffer.from(token),
+                this.TOKEN_KEY
+            );
+            return encrypted_token.toString("base64");
+        }
+        // ---
+        return token;
     }
 
     /**
@@ -39,6 +53,14 @@ export class TokenUtils {
      * @returns {Promise<Object>} - L'oggetto utente decodificato se valido
      */
     static verifica_access_token(access_token) {
+        if (this.encrypt) {
+            const token = AES256GCM.decrypt(
+                Buffer.from(access_token, "base64"),
+                this.TOKEN_KEY
+            ).toString();
+            return this.verifica_token(token, this.ACCESS_TOKEN_SECRET);
+        }
+        // ---
         return this.verifica_token(access_token, this.ACCESS_TOKEN_SECRET);
     }
 

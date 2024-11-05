@@ -2,9 +2,6 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { sequelize } from './config/db.js';
-// ---
-
-// ---
 import user_routes from './routes/userRoutes.js';
 import token_routes from './routes/tokenRoutes.js';
 import './models/associations.js';
