@@ -26,14 +26,14 @@ const PORT = process.env.PORT || 3000;
 
 try {
     await sequelize.authenticate();
-    console.log('✅ DB');
+    console.log('☑️ DB');
     // -- da utilizzare solo quando ci si vuole allineare con il db
     // await sequelize.sync({ force: false });
     // console.log('Modelli sincronizzati con il database.');
     // ---
     app.listen(PORT, () => {
-        console.log(`✅ http://localhost:${PORT}`);
+        console.log(`☑️ Server => http://localhost:${PORT}`);
     });
 } catch (error) {
-    console.error('Errore nella connessione al database:', error);
+    console.error('❌ Errore durante l\'avvio del server => ', error);
 }

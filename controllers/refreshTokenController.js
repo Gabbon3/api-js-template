@@ -19,8 +19,13 @@ export class RefreshTokenController {
             if (!refresh_token) return res.sendStatus(403);
             // ---
             const access_token = await TokenUtils.genera_access_token(refresh_token.user_id);
+            // -- ottengo l'ip adress del richiedente
+            const ip_address = req.headers['x-forwarded-for'] || req.ip;
             // -- aggiorno l'ultimo utilizzo del refresh token
-            await this.service.update_last_used(token_id);
+            await this.service.update_token_info(token_id, {
+                last_used_at: new Date(),
+                ip_address: ip_address ?? ''
+            });
             res.status(201).json({ access_token });
         } catch (error) {
             console.warn(error);

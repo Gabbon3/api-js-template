@@ -9,15 +9,14 @@ export class RefreshTokenService {
      * Crea un nuovo refresh token salvandolo sul db e restituendolo
      * @param {string} user_id
      * @param {string} user_agent
+     * @param {string} ip_address
      * @returns {string}
      */
-    async create(user_id, user_agent) {
+    async create(user_id, user_agent, ip_address) {
         const token_id = UID.genera(RefreshTokenService.random_c_length, true);
         // -- User Agent
         const ua = UAParser(user_agent);
-        const user_agent_summary = `${ua.browser.name ?? ""}-${
-            ua.browser.major ?? ""
-        }-${ua.os.name ?? ""}-${ua.os.version ?? ""}`;
+        const user_agent_summary = `${ua.browser.name ?? ""}-${ua.browser.major ?? ""}-${ua.os.name ?? ""}-${ua.os.version ?? ""}`;
         const user_agent_hash = this.user_agent_hash(user_agent);
         // ---
         const token = await RefreshToken.create({
@@ -25,6 +24,7 @@ export class RefreshTokenService {
             user_id,
             user_agent_summary,
             user_agent_hash,
+            ip_address: ip_address ?? ''
         });
         // ---
         return token ? token_id : null;
@@ -32,11 +32,12 @@ export class RefreshTokenService {
     /**
      * Aggiorna il campo last used di un token
      * @param {string} token_id
+     * @param {Object} updated_info un oggetto con le informazioni da modificare
      * @returns
      */
-    async update_last_used(token_id) {
+    async update_token_info(token_id, updated_info) {
         return await RefreshToken.update(
-            { last_used_at: new Date() },
+            updated_info,
             { where: { id: token_id } }
         );
     }

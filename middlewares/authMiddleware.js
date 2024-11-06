@@ -20,7 +20,7 @@ export const verify_access_token = (req, res, next) => {
         // - se va a buon fine vuol dire che il token è valido ed è stato rigenerato correttamente
         // return TokenUtils.refresh_token(req, res);
         return res.status(401)
-            .json({ error: "Token di accesso mancante" });
+            .json({ error: "Token di accesso non valido" });
     }
     // -- se è tutto ok aggiungo il payload dell'utente alla request
     req.user = payload;

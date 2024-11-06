@@ -30,8 +30,9 @@ export class UserController {
         try {
             const { username, password } = req.body;
             const user_agent = req.get('user-agent');
+            const ip_address = req.headers['x-forwarded-for'] || req.ip;
             // -- Access Token
-            const { access_token, refresh_token, user } = await this.service.accedi(username, password, user_agent);
+            const { access_token, refresh_token, user } = await this.service.accedi(username, password, user_agent, ip_address);
             this.set_token_cookies(res, access_token, refresh_token);
             // ---
             res.status(201).json({
