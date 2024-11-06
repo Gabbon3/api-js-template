@@ -1,3 +1,5 @@
+import { async_handler } from "../helpers/asyncHandler.js";
+import { CError } from "../helpers/cError.js";
 import { UserService } from "../services/userService.js";
 import { TokenUtils } from "../utils/tokenUtils.js";
 
@@ -10,40 +12,37 @@ export class UserController {
      * @param {Request} req 
      * @param {Response} res 
      */
-    registra = async (req, res) => {
-        try {
-            const { username, password } = req.body;
-            // ---
-            const user = await this.service.registra(username, password);
-            res.status(201).json({ message: 'Utente registrato con successo', user });
-        } catch (error) {
-            console.warn(error);
-            res.status(400).json({ error: error.message });
+    registra = async_handler(async (req, res) => {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            throw new CError("ValidationError", "Username e password sono richiesti", 422);
         }
-    }
+        // ---
+        const user = await this.service.registra(username, password);
+        res.status(201).json({ message: 'Utente registrato con successo', id: user.id });
+    })
     /**
      * Accede
      * @param {Request} req 
      * @param {Response} res 
      */
-    accedi = async (req, res) => {
-        try {
-            const { username, password } = req.body;
-            const user_agent = req.get('user-agent');
-            const ip_address = req.headers['x-forwarded-for'] || req.ip;
-            // -- Access Token
-            const { access_token, refresh_token, user } = await this.service.accedi(username, password, user_agent, ip_address);
-            this.set_token_cookies(res, access_token, refresh_token);
-            // ---
-            res.status(201).json({
-                access_token,
-                refresh_token
-            });
-        } catch (error) {
-            console.warn(error);
-            res.sendStatus(401);
+    accedi = async_handler(async (req, res) => {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            throw new CError("ValidationError", "Username e password sono richiesti", 422);
         }
-    }
+        // ---
+        const user_agent = req.get('user-agent');
+        const ip_address = req.headers['x-forwarded-for'] || req.ip;
+        // -- Access Token
+        const { access_token, refresh_token, user } = await this.service.accedi(username, password, user_agent, ip_address);
+        this.set_token_cookies(res, access_token, refresh_token);
+        // ---
+        res.status(201).json({
+            access_token,
+            refresh_token
+        });
+    })
     /**
      * Imposta nei cookie l'access e il refresh token
      * @param {Response} res 

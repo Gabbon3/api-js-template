@@ -5,6 +5,7 @@ import { sequelize } from './config/db.js';
 import user_routes from './routes/userRoutes.js';
 import token_routes from './routes/tokenRoutes.js';
 import './models/associations.js';
+import { error_handler_middleware } from './middlewares/errorMiddleware.js';
 
 dotenv.config();
 
@@ -21,6 +22,11 @@ app.use(cookieParser());
  */
 app.use('/auth', user_routes);
 app.use('/auth/token', token_routes);
+
+/**
+ * Middlewares per gli errori
+ */
+app.use(error_handler_middleware);
 
 const PORT = process.env.PORT || 3000;
 

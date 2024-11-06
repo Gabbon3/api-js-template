@@ -2,6 +2,7 @@ import { User } from "../models/User.js";
 import bcrypt from 'bcryptjs';
 import { TokenUtils } from "../utils/tokenUtils.js";
 import { RefreshTokenService } from "./refreshTokenService.js";
+import { CError } from "../helpers/cError.js";
 
 export class UserService {
     constructor() {
@@ -18,7 +19,7 @@ export class UserService {
         const user_exist = await User.findOne({
             where: { username }
         });
-        if (user_exist) throw new Error("Username già in uso");
+        if (user_exist) throw new CError("UserExist", "L'username inserito esiste già", 409);
         // -- creo un nuovo utente
         const password_hash = await this.hash_password(password);
         const user = new User({ username, password: password_hash });
@@ -38,10 +39,10 @@ export class UserService {
         const user = await User.findOne({
             where: { username }
         });
-        if (!user) throw new Error("Username o password non validi");
+        if (!user) throw new CError("AuthenticationError", "Username o password non validi", 401);
         // -- cerco se la password è corretta
         const password_is_correct = await this.verify_password(password, user.password);
-        if (!password_is_correct) throw new Error("Username o password non validi");
+        if (!password_is_correct) throw new CError("AuthenticationError", "Username o password non validi", 401);
         // -- Access Token
         const access_token = TokenUtils.genera_access_token(user.id);
         // -- Refresh Token
