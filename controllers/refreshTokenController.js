@@ -9,8 +9,8 @@ export class RefreshTokenController {
     }
     /**
      * Genera un nuovo access token se il refresh token è valido
-     * @param {*} req 
-     * @param {*} res 
+     * @param {Request} req 
+     * @param {Response} res 
      */
     generate_access_token = async_handler(async (req, res) => {
         const token_id = req.cookies.refresh_token;
